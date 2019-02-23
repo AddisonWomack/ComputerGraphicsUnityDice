@@ -2,25 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DieMovement : MonoBehaviour
+public class DieMovement : Rollable
 {
-    private Rigidbody rigidBody;
-    private float speed;
-
-    // Start is called before the first frame update
-    void Start()
+    // TODO: Make this return the actual value of the rolled die
+    public override int GetValue()
     {
-        rigidBody = GetComponent<Rigidbody>();
-        speed = 50;
-    }
-
-    void FixedUpdate()
-    {
-        float moveHorizonal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-
-        var v1 = new Vector3(moveHorizonal, 0.0f, moveVertical);
-
-        rigidBody.AddForce(v1 * speed);
+        return 6;
     }
 }

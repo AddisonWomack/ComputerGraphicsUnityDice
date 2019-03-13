@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Rollable : MonoBehaviour
 {
+    
+
     protected Rigidbody rigidBody;
     private float initialVelocity;
 
@@ -24,6 +26,14 @@ public abstract class Rollable : MonoBehaviour
     {
         this.initialVelocity = initialVelocity;
     }
+
+    public abstract bool IsDoneMoving();
+
+    public abstract bool HasReturnedValue();
+
+    public abstract void SetHasReturned(bool returned);
+
+    public abstract void UpdateMovement();
 
     // returns the result of the rolled object
     public abstract int GetValue();

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -39,7 +40,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody CurrentObjectToBeThrown;
 
     private bool isThrown = false;
-
+    private int value = 0;
     private const float defaultObjectReleaseIntensity = 30;
     private const float intensityReleaseChangePerFrame = 5;
     private const float maxObectReleaseIntensity = 2000;
@@ -99,7 +100,8 @@ public class PlayerController : MonoBehaviour
         {
             rotateCurrentObjectY(-1 * objectReleaseIntensity);
         }
-
+        this.updateDice();
+        int result = this.getResult();
     }
 
     private void rotateCurrentObjectX(float delta)
@@ -182,10 +184,35 @@ public class PlayerController : MonoBehaviour
         var rollableObjects = FindObjectsOfType<Rollable>();
         foreach (var rollableObject in rollableObjects)
         {
-            result += rollableObject.GetValue();
+            if (rollableObject.IsDoneMoving() && !rollableObject.HasReturnedValue())
+            {
+                int thisResult = rollableObject.GetValue();
+                result += thisResult;
+                if(thisResult == 0)
+                    Debug.Log("\t\t\t Die result: unknown" );
+                else
+                    Debug.Log("\t\t\t Die result: " + thisResult );
+            }
         }
 
         return result;
+    }
+
+    // updates all internal states of dice
+    private void updateDice()
+    {
+        var rollableObjects = FindObjectsOfType<Rollable>();
+        foreach (var rollableObject in rollableObjects)
+        {
+            try
+            {
+                rollableObject.UpdateMovement();
+            }
+            catch (NullReferenceException e)
+            {
+
+            }
+        }
     }
 
     // constructs a RigidBody based on the user's current selection

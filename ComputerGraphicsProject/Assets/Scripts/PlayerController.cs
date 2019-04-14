@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     public Texture2D cursorTexture;
     public CursorMode cursorMode = CursorMode.Auto;
     public Vector2 hotSpot = Vector2.zero;
+    private GameObject lightGameObject;
+    private Light lightComp;
 
     // most recent tally of thrown objects
     private int currentDieResult;
@@ -53,6 +55,24 @@ public class PlayerController : MonoBehaviour
         objectSelection = togglableObject.Die;
         objectReleaseIntensity = defaultObjectReleaseIntensity;
         CurrentObjectToBeThrown = instantiateSelectedObject();
+        lightGameObject = new GameObject("The Light");
+
+        // Add the light component
+        lightComp = lightGameObject.AddComponent<Light>();
+
+        // Set color and position
+        lightComp.color = new Color(255, 244, 214, 255);
+        lightComp.intensity = 0.005f;
+        lightComp.type = LightType.Directional;
+
+        // Set the position (or any transform property)
+        lightGameObject.transform.position = new Vector3(14.01f, 13.34f, 2.92f);
+        lightGameObject.transform.eulerAngles = new Vector3(
+            lightGameObject.transform.eulerAngles.x + 50,
+            lightGameObject.transform.eulerAngles.y -30,
+            lightGameObject.transform.eulerAngles.z
+        );
+
 
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
 
@@ -76,6 +96,38 @@ public class PlayerController : MonoBehaviour
 
             rotateCurrentObjectZ(objectReleaseIntensity);
             rotateCurrentObjectX(objectReleaseIntensity);
+        }
+        if (Input.GetKey(KeyCode.Z))
+        {
+            if (Physics.gravity.y < -1.05)
+            {
+                Physics.gravity = new Vector3(0.0f, Physics.gravity.y + 0.02f, 0.0f);
+                // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
+            }
+        }
+
+        if (Input.GetKey(KeyCode.X))
+        {
+            if(Physics.gravity.y > -15) { 
+                Physics.gravity = new Vector3(0.0f, Physics.gravity.y - 0.02f, 0.0f);
+                // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
+            }
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            if (lightComp.intensity > 0.001)
+            {
+                lightComp.intensity = lightComp.intensity - 0.0001f;
+            }
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            if (lightComp.intensity < 0.015)
+            {
+                lightComp.intensity = lightComp.intensity + 0.0001f;
+            }
         }
 
         // clear playing area of rollable objects

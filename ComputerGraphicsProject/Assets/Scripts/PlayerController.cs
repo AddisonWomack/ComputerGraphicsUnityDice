@@ -130,6 +130,21 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (Input.GetKey(KeyCode.Alpha8))
+        {
+            setNormalSurface();
+        }
+
+        if (Input.GetKey(KeyCode.Alpha9))
+        {
+            setIcySurface();
+        }
+
+        if (Input.GetKey(KeyCode.Alpha0))
+        {
+            setSandpaperSurface();
+        }
+
         // clear playing area of rollable objects
         if (Input.GetKeyUp(KeyCode.C))
         {
@@ -291,5 +306,29 @@ public class PlayerController : MonoBehaviour
         // initially not affected by gravity
         rigidbody.useGravity = false;
         return rigidbody;
+    }
+
+    private void setNormalSurface()
+    {
+        updateSurfaces(SettableFriction.surfaceType.NORMAL);
+    }
+
+    private void setIcySurface()
+    {
+        updateSurfaces(SettableFriction.surfaceType.ICE);
+    }
+
+    private void setSandpaperSurface()
+    {
+        updateSurfaces(SettableFriction.surfaceType.SANDPAPER);
+    }
+
+    private void updateSurfaces(SettableFriction.surfaceType surfaceType)
+    {
+        var objectsWithSettableFrictions = FindObjectsOfType<SettableFriction>();
+        foreach (var obj in objectsWithSettableFrictions)
+        {
+            obj.applyTextureChange(surfaceType);
+        }
     }
 }

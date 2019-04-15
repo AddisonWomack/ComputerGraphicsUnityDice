@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4814726, g: 0.61283267, b: 0.8347697, a: 1}
+  m_IndirectSpecularColor: {r: 0.4814651, g: 0.61287385, b: 0.8346509, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2022,6 +2022,7 @@ GameObject:
   - component: {fileID: 1679170473}
   - component: {fileID: 1679170472}
   - component: {fileID: 1679170471}
+  - component: {fileID: 1679170475}
   m_Layer: 0
   m_Name: Surface
   m_TagString: Untagged
@@ -2102,6 +2103,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1679170475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679170470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54746ad5c5e1a5b4b9a3b716d1f5b392, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalTexture: {fileID: 2800000, guid: bbd06b4a08a1caf44b2730696ac9752b, type: 3}
+  icyTexture: {fileID: 2800000, guid: 1d0f5384bdbcfef47b05fb6722f99652, type: 3}
+  sandPaperTexture: {fileID: 2800000, guid: 2dbdec31b499c0646953037077f7f665, type: 3}
+  normalMaterial: {fileID: 2100000, guid: fa181799d127ab241946afa8144305c8, type: 2}
+  iceMaterial: {fileID: 2100000, guid: 368d3b28abd777148bbe7b2ef7262985, type: 2}
+  sandMaterial: {fileID: 2100000, guid: 0690a2653967ed74d97a55de4077e498, type: 2}
+  currentPhysicsMaterial: {fileID: 13400000, guid: c0c2864622c2ac348a67bfa85daea5b9,
+    type: 2}
+  currentSurfaceType: 0
 --- !u!1001 &1701211520
 PrefabInstance:
   m_ObjectHideFlags: 0

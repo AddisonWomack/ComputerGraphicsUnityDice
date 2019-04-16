@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class DieMovement : Rollable
 {
-    private bool isMoving = false;
-    private bool hasStartedMoving = false;
-    private bool isFinishedMoving = false;
-    private bool hasReturnedValue = false;
-    // TODO: Make this return the actual value of the rolled die
     public override int GetValue()
     {
         int returnInt = 0;

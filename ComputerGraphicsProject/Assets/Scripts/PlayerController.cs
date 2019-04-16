@@ -145,6 +145,14 @@ public class PlayerController : MonoBehaviour
             setSandpaperSurface();
         }
 
+        if (Input.GetKeyUp(KeyCode.O))
+        {
+            enableCometTrail();
+        } else if (Input.GetKeyUp(KeyCode.P))
+        {
+            disableCometTrail();
+        }
+
         // clear playing area of rollable objects
         if (Input.GetKeyUp(KeyCode.C))
         {
@@ -279,6 +287,26 @@ public class PlayerController : MonoBehaviour
             {
 
             }
+        }
+    }
+
+    private void enableCometTrail()
+    {
+        var rollableObjects = FindObjectsOfType<Rollable>();
+
+        foreach(var rollableObject in rollableObjects)
+        {
+            rollableObject.enableCometTrail();
+        }
+    }
+
+    private void disableCometTrail()
+    {
+        var rollableObjects = FindObjectsOfType<Rollable>();
+
+        foreach (var rollableObject in rollableObjects)
+        {
+            rollableObject.disableCometTrail();
         }
     }
 

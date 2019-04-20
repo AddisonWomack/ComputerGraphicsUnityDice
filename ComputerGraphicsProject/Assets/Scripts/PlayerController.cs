@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Timers;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -26,7 +27,8 @@ public class PlayerController : MonoBehaviour
     private Light lightComp;
 
     // most recent tally of thrown objects
-    private int currentDieResult;
+    private string currentDieResult;
+    private bool showResult;
 
     // force applied to object causing it to move forward
     private float objectReleaseIntensity;
@@ -155,6 +157,18 @@ public class PlayerController : MonoBehaviour
         this.updateDice();
         int result = this.getResult();
     }
+    private void OnGUI()
+    {
+        if (showResult)
+        {
+            // Make a multiline text area that modifies stringToEdit.
+            GUI.Label(new Rect(10, 10, 200, 100), currentDieResult);
+            Timer aTimer = new Timer(2500);
+            aTimer.Elapsed += OnTimedEvent;
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
+        }
+    }
 
     private void rotateCurrentObjectX(float delta)
     {
@@ -240,14 +254,33 @@ public class PlayerController : MonoBehaviour
             {
                 int thisResult = rollableObject.GetValue();
                 result += thisResult;
-                if(thisResult == 0)
-                    Debug.Log("\t\t\t Die result: unknown" );
+                if (thisResult == 0)
+                {
+                    Debug.Log("\t\t\t Die result: unknown");
+                    ShowResultOnGUI("Unknown");
+                    showResult = true;
+                }
                 else
-                    Debug.Log("\t\t\t Die result: " + thisResult );
+                {
+                    Debug.Log("\t\t\t Die result: " + thisResult);
+                    ShowResultOnGUI(thisResult.ToString());
+                    showResult = true;
+                }
+
             }
         }
 
         return result;
+    }
+
+    private void ShowResultOnGUI(String result)
+    {
+        currentDieResult = result;
+    }
+
+    private void OnTimedEvent(System.Object source, ElapsedEventArgs e)
+    {
+        showResult = false;
     }
 
     // updates all internal states of dice

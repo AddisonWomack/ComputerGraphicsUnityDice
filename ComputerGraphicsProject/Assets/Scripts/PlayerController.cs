@@ -132,6 +132,29 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (Input.GetKey(KeyCode.Alpha8))
+        {
+            setNormalSurface();
+        }
+
+        if (Input.GetKey(KeyCode.Alpha9))
+        {
+            setIcySurface();
+        }
+
+        if (Input.GetKey(KeyCode.Alpha0))
+        {
+            setSandpaperSurface();
+        }
+
+        if (Input.GetKeyUp(KeyCode.O))
+        {
+            enableCometTrail();
+        } else if (Input.GetKeyUp(KeyCode.P))
+        {
+            disableCometTrail();
+        }
+
         // clear playing area of rollable objects
         if (Input.GetKeyUp(KeyCode.C))
         {
@@ -300,6 +323,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void enableCometTrail()
+    {
+        var rollableObjects = FindObjectsOfType<Rollable>();
+
+        foreach(var rollableObject in rollableObjects)
+        {
+            rollableObject.enableCometTrail();
+        }
+    }
+
+    private void disableCometTrail()
+    {
+        var rollableObjects = FindObjectsOfType<Rollable>();
+
+        foreach (var rollableObject in rollableObjects)
+        {
+            rollableObject.disableCometTrail();
+        }
+    }
+
     // constructs a RigidBody based on the user's current selection
     private Rigidbody instantiateSelectedObject()
     {
@@ -324,5 +367,29 @@ public class PlayerController : MonoBehaviour
         // initially not affected by gravity
         rigidbody.useGravity = false;
         return rigidbody;
+    }
+
+    private void setNormalSurface()
+    {
+        updateSurfaces(SettableFriction.surfaceType.NORMAL);
+    }
+
+    private void setIcySurface()
+    {
+        updateSurfaces(SettableFriction.surfaceType.ICE);
+    }
+
+    private void setSandpaperSurface()
+    {
+        updateSurfaces(SettableFriction.surfaceType.SANDPAPER);
+    }
+
+    private void updateSurfaces(SettableFriction.surfaceType surfaceType)
+    {
+        var objectsWithSettableFrictions = FindObjectsOfType<SettableFriction>();
+        foreach (var obj in objectsWithSettableFrictions)
+        {
+            obj.applyTextureChange(surfaceType);
+        }
     }
 }

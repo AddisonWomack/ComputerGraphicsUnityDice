@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 54746ad5c5e1a5b4b9a3b716d1f5b392
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - normalTexture: {fileID: 2800000, guid: bbd06b4a08a1caf44b2730696ac9752b, type: 3}
+  - icyTexture: {fileID: 2800000, guid: 1d0f5384bdbcfef47b05fb6722f99652, type: 3}
+  - sandPaperTexture: {fileID: 2800000, guid: 2dbdec31b499c0646953037077f7f665, type: 3}
+  - normalMaterial: {fileID: 2100000, guid: fa181799d127ab241946afa8144305c8, type: 2}
+  - iceMaterial: {fileID: 2100000, guid: 368d3b28abd777148bbe7b2ef7262985, type: 2}
+  - sandMaterial: {fileID: 2100000, guid: 0690a2653967ed74d97a55de4077e498, type: 2}
+  - currentPhysicsMaterial: {fileID: 13400000, guid: c0c2864622c2ac348a67bfa85daea5b9,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

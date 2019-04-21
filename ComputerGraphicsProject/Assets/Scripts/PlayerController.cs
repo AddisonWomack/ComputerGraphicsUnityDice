@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     public CursorMode cursorMode = CursorMode.Auto;
     public Vector2 hotSpot = Vector2.zero;
     private GameObject lightGameObject;
+    private GameObject resultText;
+    private TextMesh textComp;
     private Light lightComp;
 
     // most recent tally of thrown objects
@@ -285,8 +287,10 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("\t\t\t Die result: " + thisResult);
-                    ShowResultOnGUI(thisResult.ToString());
+                    Vector3 vec = rollableObject.getPosition();
+                    Debug.Log("\t\t\t Die result: " + thisResult + ", position = (" + vec.x + ", " + vec.y + ", " + vec.z + ")");
+                    vec.y += 4;
+                    spawnTextResult(thisResult.ToString(), vec);
                     showResult = true;
                 }
 
@@ -294,6 +298,27 @@ public class PlayerController : MonoBehaviour
         }
 
         return result;
+    }
+
+    private void spawnTextResult(String result, Vector3 position)
+    {
+        resultText = new GameObject("Result Text");
+        textComp = resultText.AddComponent<TextMesh>();
+        resultText.transform.position = position;
+        resultText.transform.eulerAngles = new Vector3(
+            lightGameObject.transform.eulerAngles.x + 20,
+            lightGameObject.transform.eulerAngles.y,
+            lightGameObject.transform.eulerAngles.z
+        );
+        textComp.text = result;
+        textComp.fontSize = 15;
+        textComp.color = new Color(255, 0, 0, 255);
+        while (transform.position.z > -15)
+        {
+            resultText.transform.position = new Vector3(resultText.transform.position.x , resultText.transform.position.y, resultText.transform.position.z - 0.001f);
+
+        }
+        //textComp.text = "";
     }
 
     private void ShowResultOnGUI(String result)

@@ -16,8 +16,11 @@ public class PlayerController : MonoBehaviour
     public Rigidbody d6Prefab;
     public Rigidbody d20Prefab;
 
+    // The spinning selector objects
     public Rigidbody d6Selector;
     public Rigidbody d20Selector;
+
+    public UnityEngine.UI.Text scoreboardText;
 
     // starting point of created object
     public int objectCreationPositionX;
@@ -72,6 +75,8 @@ public class PlayerController : MonoBehaviour
         d20Selector = (Rigidbody) GameObject.Find("Selector D20").GetComponent("Rigidbody");
 
         d6Selector.angularDrag = selectorActive;
+
+        scoreboardText = GameObject.FindGameObjectWithTag("ScoreboardText").GetComponent<UnityEngine.UI.Text>();
 
         objectReleaseIntensity = defaultObjectReleaseIntensity;
 
@@ -224,6 +229,7 @@ public class PlayerController : MonoBehaviour
         this.updateDice();
         int result = this.getResult();
     }
+
     private void OnGUI()
     {
         if (showResult)
@@ -341,6 +347,7 @@ public class PlayerController : MonoBehaviour
                     Debug.Log("\t\t\t Die result: " + thisResult + ", position = (" + vec.x + ", " + vec.y + ", " + vec.z + ")");
                     vec.y += 4;
                     spawnTextResult(thisResult.ToString(), vec);
+                    scoreboardText.text += " " + thisResult;
                     showResult = true;
                 }
 

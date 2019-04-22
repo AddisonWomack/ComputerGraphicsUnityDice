@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
     public Rigidbody d6Prefab;
     public Rigidbody d20Prefab;
 
+    public Rigidbody d6Selector;
+    public Rigidbody d20Selector;
+
     // starting point of created object
     public int objectCreationPositionX;
     public int objectCreationPositionY;
@@ -49,21 +52,32 @@ public class PlayerController : MonoBehaviour
 
     private bool isThrown = false;
     private int value = 0;
+
     private const float defaultObjectReleaseIntensity = 30;
     private const float intensityReleaseChangePerFrame = 5;
     private const float maxObectReleaseIntensity = 2000;
     private const float objectRespawnTime = 0.8f;
+    private const float selectorInactive = 100f;
+    private const float selectorActive = 5f;
 
     // Start is called before the first frame update
     void Start()
     {
         // set to die by default
         objectSelection = TogglableObject.D6;
-        objectReleaseIntensity = defaultObjectReleaseIntensity;
         CurrentObjectToBeThrown = instantiateSelectedObject();
-        lightGameObject = new GameObject("The Light");
+
+        //Handle selectors
+        d6Selector = (Rigidbody) GameObject.Find("Selector D6").GetComponent("Rigidbody");
+        d20Selector = (Rigidbody) GameObject.Find("Selector D20").GetComponent("Rigidbody");
+
+        d6Selector.angularDrag = selectorActive;
+
+        objectReleaseIntensity = defaultObjectReleaseIntensity;
 
         // Add the light component
+
+        lightGameObject = new GameObject("The Light");
         lightComp = lightGameObject.AddComponent<Light>();
 
         // Set color and position
@@ -161,6 +175,9 @@ public class PlayerController : MonoBehaviour
             objectSelection = TogglableObject.D6;
             Destroy(CurrentObjectToBeThrown.gameObject);
             CurrentObjectToBeThrown = instantiateSelectedObject();
+
+            d6Selector.angularDrag = selectorActive;
+            d20Selector.angularDrag = selectorInactive;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha2))
@@ -168,6 +185,11 @@ public class PlayerController : MonoBehaviour
             objectSelection = TogglableObject.D20;
             Destroy(CurrentObjectToBeThrown.gameObject);
             CurrentObjectToBeThrown = instantiateSelectedObject();
+
+
+
+            d6Selector.angularDrag = selectorInactive;
+            d20Selector.angularDrag = selectorActive;
         }
 
         if (Input.GetKeyUp(KeyCode.O))
@@ -182,7 +204,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.C))
         {
             deleteRollableObjects();
-            Invoke("respawnObject", objectRespawnTime);
         }
 
         if (Input.GetKey(KeyCode.UpArrow))
@@ -279,13 +300,21 @@ public class PlayerController : MonoBehaviour
         Invoke("respawnObject", objectRespawnTime);
     }
 
-    // deletes all present rollable objects
+    // deletes all present rollable objects except the held one
+    // Also removes any result text objects
     private void deleteRollableObjects()
     {
         var rollableObjects = FindObjectsOfType<Rollable>();
         foreach (var rollableObject in rollableObjects)
         {
-            Destroy(rollableObject.gameObject);
+            if(!(rollableObject.getRigidBody() == CurrentObjectToBeThrown))
+                Destroy(rollableObject.gameObject);
+        }
+
+        var texts = GameObject.FindGameObjectsWithTag("ResultText");
+        foreach (var text in texts)
+        {
+            Destroy(text);
         }
     }
 
@@ -324,6 +353,7 @@ public class PlayerController : MonoBehaviour
     private void spawnTextResult(String result, Vector3 position)
     {
         resultText = new GameObject("Result Text");
+        resultText.tag = "ResultText";
         textComp = resultText.AddComponent<TextMesh>();
         resultText.transform.position = position;
         resultText.transform.eulerAngles = new Vector3(

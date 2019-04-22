@@ -194,6 +194,11 @@ public abstract class Rollable : MonoBehaviour
         return rigidBody.position;
     }
 
+    public Rigidbody getRigidBody()
+    {
+        return rigidBody;
+    }
+
     public void disableCometTrail()
     {
         cometTrailEnabled = false;

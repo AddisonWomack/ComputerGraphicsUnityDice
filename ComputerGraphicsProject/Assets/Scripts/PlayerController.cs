@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private enum togglableObject
+    private enum TogglableObject
     {
-        Die
+        D6,
+        D20
     }
 
-    // die object that the player can create
-    public Rigidbody dieObject;
+    // die objects that the player can create
+    public Rigidbody d6Prefab;
+    public Rigidbody d20Prefab;
 
     // starting point of created object
     public int objectCreationPositionX;
@@ -36,7 +38,7 @@ public class PlayerController : MonoBehaviour
     private float angularVelocityYawRate;
 
     // type of object being created
-    private togglableObject objectSelection;
+    private TogglableObject objectSelection;
 
     // object to be thrown
     private Rigidbody CurrentObjectToBeThrown;
@@ -52,7 +54,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         // set to die by default
-        objectSelection = togglableObject.Die;
+        objectSelection = TogglableObject.D6;
         objectReleaseIntensity = defaultObjectReleaseIntensity;
         CurrentObjectToBeThrown = instantiateSelectedObject();
         lightGameObject = new GameObject("The Light");
@@ -77,6 +79,7 @@ public class PlayerController : MonoBehaviour
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
 
         Time.timeScale = 2;
+        Physics.gravity = new Vector3(0.0f, -6.5f, 0.0f);
     }
 
     // Update is called once per frame
@@ -85,24 +88,28 @@ public class PlayerController : MonoBehaviour
         // user is throwing an object
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            throwObject();
+            if (CurrentObjectToBeThrown != null)
+                throwObject();
         }
 
         // user is charging up the dice throw
         if (Input.GetKey(KeyCode.Space))
         {
-            if(objectReleaseIntensity < maxObectReleaseIntensity)
-                objectReleaseIntensity += intensityReleaseChangePerFrame;
+            if (CurrentObjectToBeThrown != null)
+            {
+                if (objectReleaseIntensity < maxObectReleaseIntensity)
+                    objectReleaseIntensity += intensityReleaseChangePerFrame;
 
-            rotateCurrentObjectZ(objectReleaseIntensity);
-            rotateCurrentObjectX(objectReleaseIntensity);
+                rotateCurrentObjectZ(objectReleaseIntensity);
+                rotateCurrentObjectX(objectReleaseIntensity);
+            }
         }
         if (Input.GetKey(KeyCode.Z))
         {
             if (Physics.gravity.y < -1.05)
             {
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y + 0.02f, 0.0f);
-                // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
+                //Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
             }
         }
 
@@ -110,7 +117,7 @@ public class PlayerController : MonoBehaviour
         {
             if(Physics.gravity.y > -15) { 
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y - 0.02f, 0.0f);
-                // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
+                //Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
             }
         }
 
@@ -143,6 +150,20 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.Alpha0))
         {
             setSandpaperSurface();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            objectSelection = TogglableObject.D6;
+            Destroy(CurrentObjectToBeThrown.gameObject);
+            CurrentObjectToBeThrown = instantiateSelectedObject();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            objectSelection = TogglableObject.D20;
+            Destroy(CurrentObjectToBeThrown.gameObject);
+            CurrentObjectToBeThrown = instantiateSelectedObject();
         }
 
         if (Input.GetKeyUp(KeyCode.O))
@@ -285,7 +306,6 @@ public class PlayerController : MonoBehaviour
             }
             catch (NullReferenceException e)
             {
-
             }
         }
     }
@@ -320,13 +340,18 @@ public class PlayerController : MonoBehaviour
         // creates selected object with default orientation at given x,y,z
         switch (objectSelection)
         {
-            case togglableObject.Die:
-                rigidbody = Instantiate(dieObject,
+            case TogglableObject.D6:
+                rigidbody = Instantiate(d6Prefab,
+                    creationPosition,
+                    Quaternion.identity);
+                break;
+            case TogglableObject.D20:
+                rigidbody = Instantiate(d20Prefab,
                     creationPosition,
                     Quaternion.identity);
                 break;
             default:
-                rigidbody = Instantiate(dieObject,
+                rigidbody = Instantiate(d6Prefab,
                     creationPosition,
                     Quaternion.identity);
                 break;

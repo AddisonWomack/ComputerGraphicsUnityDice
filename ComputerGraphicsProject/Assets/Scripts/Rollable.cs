@@ -189,6 +189,11 @@ public abstract class Rollable : MonoBehaviour
             cometTrailRenderer.positionCount = QUEUE_SIZE;
     }
 
+    public Vector3 getPosition()
+    {
+        return rigidBody.position;
+    }
+
     public void disableCometTrail()
     {
         cometTrailEnabled = false;

@@ -8,8 +8,11 @@ MonoImporter:
       type: 3}
   - d20Prefab: {fileID: 2230710332108461672, guid: 97f5d766a27dcaf46ae285cd2080c125,
       type: 3}
+  - bottlePrefab: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
+      type: 3}
   - d6Selector: {instanceID: 0}
   - d20Selector: {instanceID: 0}
+  - bottleSelector: {instanceID: 0}
   - scoreboardText: {instanceID: 0}
   - cursorTexture: {instanceID: 0}
   executionOrder: 0

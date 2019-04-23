@@ -68,8 +68,11 @@ public abstract class Rollable : MonoBehaviour
     //Used for sounds
     void OnCollisionEnter(Collision collision)
     {
-        float audioLevel = collision.relativeVelocity.magnitude * Random.value / 15.0f;
-        audioSource.PlayOneShot(diceSounds[Random.Range(0,5)], audioLevel);
+        if (rigidBody.name.CompareTo("bottle(Clone)") != 0)
+        {
+            float audioLevel = collision.relativeVelocity.magnitude * Random.value / 15.0f;
+            audioSource.PlayOneShot(diceSounds[Random.Range(0, 5)], audioLevel);
+        }
     }
 
     private void Update()

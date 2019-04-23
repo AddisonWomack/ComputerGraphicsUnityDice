@@ -10,17 +10,20 @@ public class PlayerController : MonoBehaviour
     private enum TogglableObject
     {
         D6,
-        D20
+        D20,
+        Bottle
     }
 
     private Color[] colors = {Color.blue, Color.green, Color.red, Color.cyan, Color.magenta, Color.yellow};
     // die objects that the player can create
     public Rigidbody d6Prefab;
     public Rigidbody d20Prefab;
+    public Rigidbody bottlePrefab;
 
     // The spinning selector objects
     public Rigidbody d6Selector;
     public Rigidbody d20Selector;
+    public Rigidbody bottleSelector;
 
     public UnityEngine.UI.Text scoreboardText;
 
@@ -75,13 +78,7 @@ public class PlayerController : MonoBehaviour
         objectSelection = TogglableObject.D6;
         CurrentObjectToBeThrown = instantiateSelectedObject();
 
-        //Handle selectors
-        d6Selector = (Rigidbody) GameObject.Find("Selector D6").GetComponent("Rigidbody");
-        d20Selector = (Rigidbody) GameObject.Find("Selector D20").GetComponent("Rigidbody");
-
         d6Selector.angularDrag = selectorActive;
-
-        scoreboardText = GameObject.FindGameObjectWithTag("ScoreboardText").GetComponent<UnityEngine.UI.Text>();
 
         objectReleaseIntensity = defaultObjectReleaseIntensity;
 
@@ -127,9 +124,11 @@ public class PlayerController : MonoBehaviour
             {
                 if (objectReleaseIntensity < maxObectReleaseIntensity)
                     objectReleaseIntensity += intensityReleaseChangePerFrame;
-
-                rotateCurrentObjectZ(objectReleaseIntensity);
+                
                 rotateCurrentObjectX(objectReleaseIntensity);
+
+                if(objectSelection != TogglableObject.Bottle)
+                    rotateCurrentObjectZ(objectReleaseIntensity);
             }
         }
         if (Input.GetKey(KeyCode.Z))
@@ -188,6 +187,7 @@ public class PlayerController : MonoBehaviour
 
             d6Selector.angularDrag = selectorActive;
             d20Selector.angularDrag = selectorInactive;
+            bottleSelector.angularDrag = selectorInactive;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha2))
@@ -195,11 +195,21 @@ public class PlayerController : MonoBehaviour
             objectSelection = TogglableObject.D20;
             Destroy(CurrentObjectToBeThrown.gameObject);
             CurrentObjectToBeThrown = instantiateSelectedObject();
-
-
-
+            
             d6Selector.angularDrag = selectorInactive;
             d20Selector.angularDrag = selectorActive;
+            bottleSelector.angularDrag = selectorInactive;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Alpha3))
+        {
+            objectSelection = TogglableObject.Bottle;
+            Destroy(CurrentObjectToBeThrown.gameObject);
+            CurrentObjectToBeThrown = instantiateSelectedObject();
+
+            d6Selector.angularDrag = selectorInactive;
+            d20Selector.angularDrag = selectorInactive;
+            bottleSelector.angularDrag = selectorActive;
         }
 
         if (Input.GetKeyUp(KeyCode.O))
@@ -299,11 +309,15 @@ public class PlayerController : MonoBehaviour
             direction = -0.1f*objectReleaseIntensity*(CurrentObjectToBeThrown.position - hit.point);
         }
 
+        if (objectSelection == TogglableObject.Bottle)
+            direction[1] = 2.0f;
+
         // launch the object forward with the given intensity
         CurrentObjectToBeThrown.AddForce(direction);
 
-        // launch the object forward with the given intensity
-        CurrentObjectToBeThrown.AddTorque(direction);
+        // launch the object with spin, unless it's a bottle
+        if (objectSelection != TogglableObject.Bottle)
+            CurrentObjectToBeThrown.AddTorque(direction);
 
         // reset object release intensity to default
         objectReleaseIntensity = defaultObjectReleaseIntensity;
@@ -472,6 +486,11 @@ public class PlayerController : MonoBehaviour
                 break;
             case TogglableObject.D20:
                 rigidbody = Instantiate(d20Prefab,
+                    creationPosition,
+                    Quaternion.identity);
+                break;
+            case TogglableObject.Bottle:
+                rigidbody = Instantiate(bottlePrefab,
                     creationPosition,
                     Quaternion.identity);
                 break;

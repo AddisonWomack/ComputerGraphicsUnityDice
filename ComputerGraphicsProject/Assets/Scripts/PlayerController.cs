@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Timers;
 using UnityEngine;
+using System.Threading;
 
 public class PlayerController : MonoBehaviour
 {
@@ -51,6 +52,7 @@ public class PlayerController : MonoBehaviour
     private const float intensityReleaseChangePerFrame = 5;
     private const float maxObectReleaseIntensity = 2000;
     private const float objectRespawnTime = 0.8f;
+    private List<GameObject> resultTextList = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -103,7 +105,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Z))
         {
-            if (Physics.gravity.y < -1.05)
+            if (Physics.gravity.y < -3.05)
             {
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y + 0.02f, 0.0f);
                 // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
@@ -180,6 +182,7 @@ public class PlayerController : MonoBehaviour
             rotateCurrentObjectY(-1 * objectReleaseIntensity);
         }
         this.updateDice();
+        updateResults();
         int result = this.getResult();
     }
     private void OnGUI()
@@ -187,8 +190,8 @@ public class PlayerController : MonoBehaviour
         if (showResult)
         {
             // Make a multiline text area that modifies stringToEdit.
-            GUI.Label(new Rect(10, 10, 200, 100), currentDieResult);
-            Timer aTimer = new Timer(2500);
+            //GUI.Label(new Rect(10, 10, 200, 100), currentDieResult);
+            System.Timers.Timer aTimer = new System.Timers.Timer(2500);
             aTimer.Elapsed += OnTimedEvent;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
@@ -282,13 +285,14 @@ public class PlayerController : MonoBehaviour
                 if (thisResult == 0)
                 {
                     Debug.Log("\t\t\t Die result: unknown");
-                    ShowResultOnGUI("Unknown");
+                    Vector3 vec = rollableObject.getPosition();
+                    spawnTextResult("?", vec);
                     showResult = true;
                 }
                 else
                 {
                     Vector3 vec = rollableObject.getPosition();
-                    Debug.Log("\t\t\t Die result: " + thisResult + ", position = (" + vec.x + ", " + vec.y + ", " + vec.z + ")");
+                    Debug.Log("\t\t\t Die result: " + thisResult);
                     vec.y += 4;
                     spawnTextResult(thisResult.ToString(), vec);
                     showResult = true;
@@ -302,23 +306,42 @@ public class PlayerController : MonoBehaviour
 
     private void spawnTextResult(String result, Vector3 position)
     {
+        //ResultText thisText = new ResultText(result);
+        //Instantiate(thisText, new Vector3(-5, 18.5f, -9), Quaternion.identity);
         resultText = new GameObject("Result Text");
         textComp = resultText.AddComponent<TextMesh>();
-        resultText.transform.position = position;
+        resultText.transform.position = new Vector3(-5, 18.5f, -9);
         resultText.transform.eulerAngles = new Vector3(
-            lightGameObject.transform.eulerAngles.x + 20,
-            lightGameObject.transform.eulerAngles.y,
-            lightGameObject.transform.eulerAngles.z
+            resultText.transform.eulerAngles.x + 30,
+            resultText.transform.eulerAngles.y,
+            resultText.transform.eulerAngles.z
         );
-        textComp.text = result;
-        textComp.fontSize = 15;
-        textComp.color = new Color(255, 0, 0, 255);
-        while (transform.position.z > -15)
-        {
-            resultText.transform.position = new Vector3(resultText.transform.position.x , resultText.transform.position.y, resultText.transform.position.z - 0.001f);
 
+        textComp.text = result;
+        textComp.characterSize = 0.1f;
+        textComp.fontSize = 100;
+
+        textComp.color = new Color(164, 0, 0, 255);
+
+        resultTextList.Add(resultText);
+    }
+
+    private void updateResults()
+    {
+        int i = 0;
+        if (resultTextList.Count == 10)
+        {
+            resultTextList[0].transform.position = new Vector3(100, 100, 100);
+            resultTextList.RemoveAt(0);
         }
-        //textComp.text = "";
+
+        foreach (GameObject obj in resultTextList)
+        {
+            float step = 0.2f * Time.deltaTime;
+            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(obj.transform.position.x + 1, obj.transform.position.y, obj.transform.position.z), step);
+            //obj.transform.position = new Vector3(obj.transform.position.x + 1, obj.transform.position.y, obj.transform.position.z);
+            obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 0.999f, obj.transform.localScale.y * 0.999f, obj.transform.localScale.z * 0.999f), step);
+        }
     }
 
     private void ShowResultOnGUI(String result)

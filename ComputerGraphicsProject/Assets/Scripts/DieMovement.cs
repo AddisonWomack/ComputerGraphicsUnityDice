@@ -84,6 +84,17 @@ public class DieMovement : Rollable
                     }
                 }
             }
+            //Bottle Value Handling
+            else if (rigidBody.name.CompareTo("bottle(Clone)") == 0)
+            {
+                Debug.Log("\t\t\t Die angles: " + angle);
+
+                returnInt = 1;
+                if (AngleDiff(angle.x, angle.z, 0.0, 0.0) < 10.0)
+                    returnInt = 10;
+                if (AngleDiff(angle.x, angle.z, 0.0, 180.0) < 10.0)
+                    returnInt = 20;
+            }
             SetHasReturned(true);
         }
         

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public abstract class Rollable : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public abstract class Rollable : MonoBehaviour
         basic
     }
 
+    AudioSource audioSource;
+    private AudioClip[] diceSounds = new AudioClip[5];
 
     // private variables
 
@@ -46,12 +49,27 @@ public abstract class Rollable : MonoBehaviour
         initialVelocity = 1;
         isInitialized = false;
         mostRecentPosition = new Vector3(0.0f, 0.0f, 0.0f);
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+
+        diceSounds[0] = Resources.Load("dice1") as AudioClip;
+        diceSounds[1] = Resources.Load("dice2") as AudioClip;
+        diceSounds[2] = Resources.Load("dice3") as AudioClip;
+        diceSounds[3] = Resources.Load("dice4") as AudioClip;
+        diceSounds[4] = Resources.Load("dice5") as AudioClip;
     }
 
     // Remove die when it leaves field of view
     void OnBecameInvisible()
     {
         Destroy(gameObject);
+    }
+
+    //Used for sounds
+    void OnCollisionEnter(Collision collision)
+    {
+        float audioLevel = collision.relativeVelocity.magnitude * Random.value / 15.0f;
+        audioSource.PlayOneShot(diceSounds[Random.Range(0,5)], audioLevel);
     }
 
     private void Update()
@@ -192,6 +210,11 @@ public abstract class Rollable : MonoBehaviour
     public Vector3 getPosition()
     {
         return rigidBody.position;
+    }
+
+    public Rigidbody getRigidBody()
+    {
+        return rigidBody;
     }
 
     public void disableCometTrail()

@@ -7,13 +7,21 @@ using System.Threading;
 
 public class PlayerController : MonoBehaviour
 {
-    private enum togglableObject
+    private enum TogglableObject
     {
-        Die
+        D6,
+        D20
     }
 
-    // die object that the player can create
-    public Rigidbody dieObject;
+    // die objects that the player can create
+    public Rigidbody d6Prefab;
+    public Rigidbody d20Prefab;
+
+    // The spinning selector objects
+    public Rigidbody d6Selector;
+    public Rigidbody d20Selector;
+
+    public UnityEngine.UI.Text scoreboardText;
 
     // starting point of created object
     public int objectCreationPositionX;
@@ -41,29 +49,45 @@ public class PlayerController : MonoBehaviour
     private float angularVelocityYawRate;
 
     // type of object being created
-    private togglableObject objectSelection;
+    private TogglableObject objectSelection;
 
     // object to be thrown
     private Rigidbody CurrentObjectToBeThrown;
 
     private bool isThrown = false;
     private int value = 0;
+
     private const float defaultObjectReleaseIntensity = 30;
     private const float intensityReleaseChangePerFrame = 5;
     private const float maxObectReleaseIntensity = 2000;
     private const float objectRespawnTime = 0.8f;
+<<<<<<< HEAD
     private List<GameObject> resultTextList = new List<GameObject>();
+=======
+    private const float selectorInactive = 100f;
+    private const float selectorActive = 5f;
+>>>>>>> fac15dcbac843b1929c048d462502e83b74baf50
 
     // Start is called before the first frame update
     void Start()
     {
         // set to die by default
-        objectSelection = togglableObject.Die;
-        objectReleaseIntensity = defaultObjectReleaseIntensity;
+        objectSelection = TogglableObject.D6;
         CurrentObjectToBeThrown = instantiateSelectedObject();
-        lightGameObject = new GameObject("The Light");
+
+        //Handle selectors
+        d6Selector = (Rigidbody) GameObject.Find("Selector D6").GetComponent("Rigidbody");
+        d20Selector = (Rigidbody) GameObject.Find("Selector D20").GetComponent("Rigidbody");
+
+        d6Selector.angularDrag = selectorActive;
+
+        scoreboardText = GameObject.FindGameObjectWithTag("ScoreboardText").GetComponent<UnityEngine.UI.Text>();
+
+        objectReleaseIntensity = defaultObjectReleaseIntensity;
 
         // Add the light component
+
+        lightGameObject = new GameObject("The Light");
         lightComp = lightGameObject.AddComponent<Light>();
 
         // Set color and position
@@ -83,6 +107,7 @@ public class PlayerController : MonoBehaviour
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
 
         Time.timeScale = 2;
+        Physics.gravity = new Vector3(0.0f, -6.5f, 0.0f);
     }
 
     // Update is called once per frame
@@ -91,24 +116,28 @@ public class PlayerController : MonoBehaviour
         // user is throwing an object
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            throwObject();
+            if (CurrentObjectToBeThrown != null)
+                throwObject();
         }
 
         // user is charging up the dice throw
         if (Input.GetKey(KeyCode.Space))
         {
-            if(objectReleaseIntensity < maxObectReleaseIntensity)
-                objectReleaseIntensity += intensityReleaseChangePerFrame;
+            if (CurrentObjectToBeThrown != null)
+            {
+                if (objectReleaseIntensity < maxObectReleaseIntensity)
+                    objectReleaseIntensity += intensityReleaseChangePerFrame;
 
-            rotateCurrentObjectZ(objectReleaseIntensity);
-            rotateCurrentObjectX(objectReleaseIntensity);
+                rotateCurrentObjectZ(objectReleaseIntensity);
+                rotateCurrentObjectX(objectReleaseIntensity);
+            }
         }
         if (Input.GetKey(KeyCode.Z))
         {
             if (Physics.gravity.y < -3.05)
             {
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y + 0.02f, 0.0f);
-                // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
+                //Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
             }
         }
 
@@ -116,7 +145,7 @@ public class PlayerController : MonoBehaviour
         {
             if(Physics.gravity.y > -15) { 
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y - 0.02f, 0.0f);
-                // Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
+                //Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
             }
         }
 
@@ -151,6 +180,28 @@ public class PlayerController : MonoBehaviour
             setSandpaperSurface();
         }
 
+        if (Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            objectSelection = TogglableObject.D6;
+            Destroy(CurrentObjectToBeThrown.gameObject);
+            CurrentObjectToBeThrown = instantiateSelectedObject();
+
+            d6Selector.angularDrag = selectorActive;
+            d20Selector.angularDrag = selectorInactive;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            objectSelection = TogglableObject.D20;
+            Destroy(CurrentObjectToBeThrown.gameObject);
+            CurrentObjectToBeThrown = instantiateSelectedObject();
+
+
+
+            d6Selector.angularDrag = selectorInactive;
+            d20Selector.angularDrag = selectorActive;
+        }
+
         if (Input.GetKeyUp(KeyCode.O))
         {
             enableCometTrail();
@@ -163,7 +214,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.C))
         {
             deleteRollableObjects();
-            Invoke("respawnObject", objectRespawnTime);
         }
 
         if (Input.GetKey(KeyCode.UpArrow))
@@ -185,6 +235,7 @@ public class PlayerController : MonoBehaviour
         updateResults();
         int result = this.getResult();
     }
+
     private void OnGUI()
     {
         if (showResult)
@@ -261,13 +312,21 @@ public class PlayerController : MonoBehaviour
         Invoke("respawnObject", objectRespawnTime);
     }
 
-    // deletes all present rollable objects
+    // deletes all present rollable objects except the held one
+    // Also removes any result text objects
     private void deleteRollableObjects()
     {
         var rollableObjects = FindObjectsOfType<Rollable>();
         foreach (var rollableObject in rollableObjects)
         {
-            Destroy(rollableObject.gameObject);
+            if(!(rollableObject.getRigidBody() == CurrentObjectToBeThrown))
+                Destroy(rollableObject.gameObject);
+        }
+
+        var texts = GameObject.FindGameObjectsWithTag("ResultText");
+        foreach (var text in texts)
+        {
+            Destroy(text);
         }
     }
 
@@ -295,6 +354,7 @@ public class PlayerController : MonoBehaviour
                     Debug.Log("\t\t\t Die result: " + thisResult);
                     vec.y += 4;
                     spawnTextResult(thisResult.ToString(), vec);
+                    scoreboardText.text += " " + thisResult;
                     showResult = true;
                 }
 
@@ -309,6 +369,7 @@ public class PlayerController : MonoBehaviour
         //ResultText thisText = new ResultText(result);
         //Instantiate(thisText, new Vector3(-5, 18.5f, -9), Quaternion.identity);
         resultText = new GameObject("Result Text");
+        resultText.tag = "ResultText";
         textComp = resultText.AddComponent<TextMesh>();
         resultText.transform.position = new Vector3(-5, 18.5f, -9);
         resultText.transform.eulerAngles = new Vector3(
@@ -338,8 +399,7 @@ public class PlayerController : MonoBehaviour
         foreach (GameObject obj in resultTextList)
         {
             float step = 0.2f * Time.deltaTime;
-            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(obj.transform.position.x + 1, obj.transform.position.y, obj.transform.position.z), step);
-            //obj.transform.position = new Vector3(obj.transform.position.x + 1, obj.transform.position.y, obj.transform.position.z);
+            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(obj.transform.position.x + 1, obj.transform.position.y, obj.transform.position.z), step)
             obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 0.999f, obj.transform.localScale.y * 0.999f, obj.transform.localScale.z * 0.999f), step);
         }
     }
@@ -366,7 +426,6 @@ public class PlayerController : MonoBehaviour
             }
             catch (NullReferenceException e)
             {
-
             }
         }
     }
@@ -401,13 +460,18 @@ public class PlayerController : MonoBehaviour
         // creates selected object with default orientation at given x,y,z
         switch (objectSelection)
         {
-            case togglableObject.Die:
-                rigidbody = Instantiate(dieObject,
+            case TogglableObject.D6:
+                rigidbody = Instantiate(d6Prefab,
+                    creationPosition,
+                    Quaternion.identity);
+                break;
+            case TogglableObject.D20:
+                rigidbody = Instantiate(d20Prefab,
                     creationPosition,
                     Quaternion.identity);
                 break;
             default:
-                rigidbody = Instantiate(dieObject,
+                rigidbody = Instantiate(d6Prefab,
                     creationPosition,
                     Quaternion.identity);
                 break;

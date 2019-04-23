@@ -3,7 +3,15 @@ guid: d941bf9056b7f9745ba41a6445c690bd
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - d6Prefab: {fileID: 4703593343297594873, guid: 3065cc249438cf94ab2c0a46e6fe2410,
+      type: 3}
+  - d20Prefab: {fileID: 2230710332108461672, guid: 97f5d766a27dcaf46ae285cd2080c125,
+      type: 3}
+  - d6Selector: {instanceID: 0}
+  - d20Selector: {instanceID: 0}
+  - scoreboardText: {instanceID: 0}
+  - cursorTexture: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

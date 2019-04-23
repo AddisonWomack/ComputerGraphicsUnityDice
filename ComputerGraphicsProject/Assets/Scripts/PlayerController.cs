@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
         D20
     }
 
+    private Color[] colors = {Color.blue, Color.green, Color.red, Color.cyan, Color.magenta, Color.yellow};
     // die objects that the player can create
     public Rigidbody d6Prefab;
     public Rigidbody d20Prefab;
@@ -61,12 +62,11 @@ public class PlayerController : MonoBehaviour
     private const float intensityReleaseChangePerFrame = 5;
     private const float maxObectReleaseIntensity = 2000;
     private const float objectRespawnTime = 0.8f;
-<<<<<<< HEAD
+
     private List<GameObject> resultTextList = new List<GameObject>();
-=======
+
     private const float selectorInactive = 100f;
     private const float selectorActive = 5f;
->>>>>>> fac15dcbac843b1929c048d462502e83b74baf50
 
     // Start is called before the first frame update
     void Start()
@@ -371,7 +371,7 @@ public class PlayerController : MonoBehaviour
         resultText = new GameObject("Result Text");
         resultText.tag = "ResultText";
         textComp = resultText.AddComponent<TextMesh>();
-        resultText.transform.position = new Vector3(-5, 18.5f, -9);
+        resultText.transform.position = new Vector3(position.x, position.y + 2, position.z);
         resultText.transform.eulerAngles = new Vector3(
             resultText.transform.eulerAngles.x + 30,
             resultText.transform.eulerAngles.y,
@@ -382,7 +382,7 @@ public class PlayerController : MonoBehaviour
         textComp.characterSize = 0.1f;
         textComp.fontSize = 100;
 
-        textComp.color = new Color(164, 0, 0, 255);
+        textComp.color = colors[result != "?" ? Int32.Parse(result)%6 : 0];
 
         resultTextList.Add(resultText);
     }
@@ -398,9 +398,14 @@ public class PlayerController : MonoBehaviour
 
         foreach (GameObject obj in resultTextList)
         {
-            float step = 0.2f * Time.deltaTime;
-            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(obj.transform.position.x + 1, obj.transform.position.y, obj.transform.position.z), step)
-            obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 0.999f, obj.transform.localScale.y * 0.999f, obj.transform.localScale.z * 0.999f), step);
+            float step = 1.5f * Time.deltaTime;
+            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-15, 19, -11), step);
+            obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 1.2f, obj.transform.localScale.y * 1.2f, obj.transform.localScale.z * 1.2f), step);
+            if(obj.transform.localScale.x > 8)
+            {
+                TextMesh mesh = obj.GetComponent<TextMesh>();
+                mesh.text = "";
+            }
         }
     }
 

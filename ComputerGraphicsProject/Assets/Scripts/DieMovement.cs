@@ -46,32 +46,7 @@ public class DieMovement : Rollable
     public override int GetValue()
     {
         int returnInt = 0;
-<<<<<<< HEAD
-        Vector3 angle = rigidBody.rotation.eulerAngles;
-        if (IsDoneMoving() )
-        {
-            
-            if (260.0 < angle.x && angle.x < 280.0)
-            {
-                returnInt = 1;
-            }
-            else if (80.0 < angle.x && angle.x < 100.0)
-            {
-                returnInt = 6;
-            }
-            else if (350 < angle.x || angle.x < 10.0)
-            {
-                if (260.0 < angle.z && angle.z < 280.0)
-                {
-                    returnInt = 5;
-                }
-                else if (80.0 < angle.z && angle.z < 100.0)
-                {
-                    returnInt = 2;
-                }
-                else if (350 < angle.z || angle.z < 10.0)
-=======
-        //Debug.Log("\t\t\t Die type: " + rigidBody.name);
+
         if (IsDoneMoving())
         {
             Vector3 angle = rigidBody.rotation.eulerAngles;
@@ -83,7 +58,6 @@ public class DieMovement : Rollable
                 double bestDiff = 360.0;
                 double newDiff;
                 for (int i = 0; i < 6; i++)
->>>>>>> fac15dcbac843b1929c048d462502e83b74baf50
                 {
                     newDiff = AngleDiff(angle.x, angle.z, d6Angles[i, 0], d6Angles[i, 1]);
                     if (newDiff < bestDiff)
@@ -92,19 +66,14 @@ public class DieMovement : Rollable
                         returnInt = i + 1;
                     }
                 }
-<<<<<<< HEAD
-                else if (170.0 < angle.z && angle.z < 190.0)
-=======
             }
-            //D20 Value handling
             else if (rigidBody.name.CompareTo("d20(Clone)") == 0)
             {
                 //Debug.Log("\t\t\t Die angles: " + angle);
 
                 double bestDiff = 360.0;
                 double newDiff;
-                for (int i = 0; i<20; i++)
->>>>>>> fac15dcbac843b1929c048d462502e83b74baf50
+                for (int i = 0; i < 20; i++)
                 {
                     newDiff = AngleDiff(angle.x, angle.z, d20Angles[i, 0], d20Angles[i, 1]);
                     if (newDiff < bestDiff)
@@ -145,14 +114,10 @@ public class DieMovement : Rollable
             hasStartedMoving = true;
             stopCheck = 20;
         }
-<<<<<<< HEAD
         else if (velocityMagnitude < 0.01 && hasStartedMoving
             && ((260.0 < angle.x && angle.x < 280.0)
                 || (80.0 < angle.x && angle.x < 100.0)
                 || (350 < angle.x || angle.x < 10.0)))
-=======
-        else if (velocityMagnitude < 0.01 && hasStartedMoving && !isFinishedMoving)
->>>>>>> fac15dcbac843b1929c048d462502e83b74baf50
         {
             if (stopCheck-- < 0)
             {

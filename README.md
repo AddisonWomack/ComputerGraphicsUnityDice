@@ -45,5 +45,9 @@ This project was done as a class project for CS 4053/5053 Computer Graphics at t
 
 **r** - toggle result text animation direction
 
+**o** - enable comet trail 
+
+**p** - disable comet trail
+
 
 

@@ -67,6 +67,8 @@ public class PlayerController : MonoBehaviour
     private const float objectRespawnTime = 0.8f;
 
     private List<GameObject> resultTextList = new List<GameObject>();
+    private bool moveResultTowardUser = true;
+    private int resultCount = 0;
 
     private const float selectorInactive = 100f;
     private const float selectorActive = 5f;
@@ -162,6 +164,11 @@ public class PlayerController : MonoBehaviour
             {
                 lightComp.intensity = lightComp.intensity + 0.0001f;
             }
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            moveResultTowardUser = !moveResultTowardUser;
         }
 
         if (Input.GetKey(KeyCode.Alpha8))
@@ -342,6 +349,7 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(text);
         }
+        resultCount = 0;
     }
 
     // returns rolled result of all rollable objects
@@ -369,6 +377,7 @@ public class PlayerController : MonoBehaviour
                     vec.y += 4;
                     spawnTextResult(thisResult.ToString(), vec);
                     scoreboardText.text += " " + thisResult;
+                    resultCount++;
                     showResult = true;
                 }
 
@@ -380,8 +389,6 @@ public class PlayerController : MonoBehaviour
 
     private void spawnTextResult(String result, Vector3 position)
     {
-        //ResultText thisText = new ResultText(result);
-        //Instantiate(thisText, new Vector3(-5, 18.5f, -9), Quaternion.identity);
         resultText = new GameObject("Result Text");
         resultText.tag = "ResultText";
         textComp = resultText.AddComponent<TextMesh>();
@@ -412,20 +419,53 @@ public class PlayerController : MonoBehaviour
 
         foreach (GameObject obj in resultTextList)
         {
-            float step = 1.5f * Time.deltaTime;
-            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-15, 19, -11), step);
-            obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 1.2f, obj.transform.localScale.y * 1.2f, obj.transform.localScale.z * 1.2f), step);
-            if(obj.transform.localScale.x > 8)
+            float step;
+            if (moveResultTowardUser)
             {
-                TextMesh mesh = obj.GetComponent<TextMesh>();
-                mesh.text = "";
+                step = 1.8f * Time.deltaTime;
+                obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-15, 19, -11), step);
+                obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 1.2f, obj.transform.localScale.y * 1.2f, obj.transform.localScale.z * 1.2f), step);
+                if (obj.transform.localScale.x > 8)
+                {
+                    TextMesh mesh = obj.GetComponent<TextMesh>();
+                    mesh.text = "";
+                }
             }
+            else
+            {
+                step = 3f * Time.deltaTime;
+                if (resultCount < 25)
+                {
+                    obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-4+((resultCount-1)*0.4f), 15.9f, 2), step);
+                }
+                else
+                {
+                    int temp = resultCount - 24;
+                    if(temp > 32)
+                    {
+                        temp -= 32;
+                        if(temp%32 < 6)
+                            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.45f), 14.5f, 2), step);
+                        else
+                            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.38f), 14.5f, 2), step);
+                    }
+                    else
+                    {
+                        if (temp % 32 < 6)
+                            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.45f), 15.4f, 2), step);
+                        else
+                            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.38f), 15.4f, 2), step);
+                    }
+                    
+                }
+                if (obj.transform.position.z < 2.000001f && obj.transform.position.z > 1.999999f)
+                {
+                    TextMesh mesh = obj.GetComponent<TextMesh>();
+                    mesh.text = "";
+                }
+            }
+            
         }
-    }
-
-    private void ShowResultOnGUI(String result)
-    {
-        currentDieResult = result;
     }
 
     private void OnTimedEvent(System.Object source, ElapsedEventArgs e)

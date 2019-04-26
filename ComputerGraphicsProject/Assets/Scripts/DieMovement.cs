@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class defines how a die-shaped object ought to move and yield results
+/// </summary>
 public class DieMovement : Rollable
 {
     private int stopCheck;
@@ -53,8 +56,6 @@ public class DieMovement : Rollable
             //D6 value handling
             if (rigidBody.name.CompareTo("d6(Clone)") == 0)
             {
-                Debug.Log("\t\t\t Die angles: " + angle);
-
                 double bestDiff = 360.0;
                 double newDiff;
                 for (int i = 0; i < 6; i++)
@@ -69,8 +70,6 @@ public class DieMovement : Rollable
             }
             else if (rigidBody.name.CompareTo("d20(Clone)") == 0)
             {
-                //Debug.Log("\t\t\t Die angles: " + angle);
-
                 double bestDiff = 360.0;
                 double newDiff;
                 for (int i = 0; i < 20; i++)
@@ -86,7 +85,6 @@ public class DieMovement : Rollable
             //Bottle Value Handling
             else if (rigidBody.name.CompareTo("bottle(Clone)") == 0)
             {
-                Debug.Log("\t\t\t Die angles: " + angle);
 
                 returnInt = 1;
                 if (AngleDiff(angle.x, angle.z, 0.0, 0.0) < 10.0)

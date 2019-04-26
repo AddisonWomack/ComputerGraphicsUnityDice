@@ -5,6 +5,9 @@ using System.Timers;
 using UnityEngine;
 using System.Threading;
 
+/// <summary>
+/// This class defines the ways that a player can interact with our environment
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
     private enum TogglableObject
@@ -25,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody d20Selector;
     public Rigidbody bottleSelector;
 
+    // text that is rendered on the scorebard
     public UnityEngine.UI.Text scoreboardText;
 
     // starting point of created object
@@ -48,6 +52,7 @@ public class PlayerController : MonoBehaviour
     // force applied to object causing it to move forward
     private float objectReleaseIntensity;
 
+    // the angular velocity of the throwable object before release
     private float angularVelocityPitchRate;
     private float angularVelocityRollRate;
     private float angularVelocityYawRate;
@@ -58,15 +63,20 @@ public class PlayerController : MonoBehaviour
     // object to be thrown
     private Rigidbody CurrentObjectToBeThrown;
 
+    // has the current object been thrown yet?
     private bool isThrown = false;
-    private int value = 0;
 
+
+    private List<GameObject> resultTextList = new List<GameObject>();
+    private bool moveResultTowardUser = true;
+    private int resultCount = 0;
+
+    // Set of constants associated with this class
     private const float defaultObjectReleaseIntensity = 30;
     private const float intensityReleaseChangePerFrame = 5;
     private const float maxObectReleaseIntensity = 2000;
     private const float objectRespawnTime = 0.8f;
 
-    private List<GameObject> resultTextList = new List<GameObject>();
 
     private const float selectorInactive = 100f;
     private const float selectorActive = 5f;
@@ -131,23 +141,25 @@ public class PlayerController : MonoBehaviour
                     rotateCurrentObjectZ(objectReleaseIntensity);
             }
         }
+
+        // increase gravity
         if (Input.GetKey(KeyCode.Z))
         {
             if (Physics.gravity.y < -3.05)
             {
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y + 0.02f, 0.0f);
-                //Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
             }
         }
 
+        // decrease gravity
         if (Input.GetKey(KeyCode.X))
         {
             if(Physics.gravity.y > -15) { 
                 Physics.gravity = new Vector3(0.0f, Physics.gravity.y - 0.02f, 0.0f);
-                //Debug.Log(Physics.gravity.ToString() + " and y= " + Physics.gravity.y);
             }
         }
 
+        // decrease light intensity
         if (Input.GetKey(KeyCode.A))
         {
             if (lightComp.intensity > 0.001)
@@ -156,6 +168,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // increase light intensity
         if (Input.GetKey(KeyCode.S))
         {
             if (lightComp.intensity < 0.015)
@@ -164,21 +177,31 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.Alpha8))
+        // toggle die result floating towards user
+        if (Input.GetKey(KeyCode.R))
+        {
+            moveResultTowardUser = !moveResultTowardUser;
+        }
+
+        // change to normal dice box surface
+        if (Input.GetKeyUp(KeyCode.Alpha8))
         {
             setNormalSurface();
         }
 
-        if (Input.GetKey(KeyCode.Alpha9))
+        // change to icy dice box surface
+        if (Input.GetKeyUp(KeyCode.Alpha9))
         {
             setIcySurface();
         }
 
-        if (Input.GetKey(KeyCode.Alpha0))
+        // change to sand paper surface
+        if (Input.GetKeyUp(KeyCode.Alpha0))
         {
             setSandpaperSurface();
         }
 
+        // switch to d6 object
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
             objectSelection = TogglableObject.D6;
@@ -190,6 +213,7 @@ public class PlayerController : MonoBehaviour
             bottleSelector.angularDrag = selectorInactive;
         }
 
+        // switch to d20 object
         if (Input.GetKeyUp(KeyCode.Alpha2))
         {
             objectSelection = TogglableObject.D20;
@@ -201,6 +225,7 @@ public class PlayerController : MonoBehaviour
             bottleSelector.angularDrag = selectorInactive;
         }
 
+        // switch to bottle object
         if (Input.GetKeyUp(KeyCode.Alpha3))
         {
             objectSelection = TogglableObject.Bottle;
@@ -212,11 +237,13 @@ public class PlayerController : MonoBehaviour
             bottleSelector.angularDrag = selectorActive;
         }
 
+        // turn comet trail on
         if (Input.GetKeyUp(KeyCode.O))
         {
             enableCometTrail();
         } else if (Input.GetKeyUp(KeyCode.P))
         {
+            // disable comet trail
             disableCometTrail();
         }
 
@@ -226,19 +253,23 @@ public class PlayerController : MonoBehaviour
             deleteRollableObjects();
         }
 
+        // rotate object forward (away from user)
         if (Input.GetKey(KeyCode.UpArrow))
         {
             rotateCurrentObjectX(-1 * objectReleaseIntensity);
         } else if (Input.GetKey(KeyCode.DownArrow))
         {
+            // rotate backward (towards user)
             rotateCurrentObjectX(objectReleaseIntensity);
         }
 
+        // rotate object to the left (negative yaw)
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             rotateCurrentObjectY(objectReleaseIntensity);
         } else if (Input.GetKey(KeyCode.RightArrow))
         {
+            // rotate object to the right (positive yaw)
             rotateCurrentObjectY(-1 * objectReleaseIntensity);
         }
 
@@ -348,6 +379,7 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(text);
         }
+        resultCount = 0;
     }
 
     // returns rolled result of all rollable objects
@@ -363,7 +395,6 @@ public class PlayerController : MonoBehaviour
                 result += thisResult;
                 if (thisResult == 0)
                 {
-                    Debug.Log("\t\t\t Die result: unknown");
                     Vector3 vec = rollableObject.getPosition();
                     spawnTextResult("?", vec);
                     showResult = true;
@@ -371,10 +402,10 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     Vector3 vec = rollableObject.getPosition();
-                    Debug.Log("\t\t\t Die result: " + thisResult);
                     vec.y += 4;
                     spawnTextResult(thisResult.ToString(), vec);
                     scoreboardText.text += " " + thisResult;
+                    resultCount++;
                     showResult = true;
                 }
 
@@ -386,8 +417,6 @@ public class PlayerController : MonoBehaviour
 
     private void spawnTextResult(String result, Vector3 position)
     {
-        //ResultText thisText = new ResultText(result);
-        //Instantiate(thisText, new Vector3(-5, 18.5f, -9), Quaternion.identity);
         resultText = new GameObject("Result Text");
         resultText.tag = "ResultText";
         textComp = resultText.AddComponent<TextMesh>();
@@ -407,31 +436,75 @@ public class PlayerController : MonoBehaviour
         resultTextList.Add(resultText);
     }
 
+    /// <summary>
+    /// Cause result of thrown object to float upwards
+    /// </summary>
     private void updateResults()
     {
         int i = 0;
         if (resultTextList.Count == 10)
         {
-            resultTextList[0].transform.position = new Vector3(100, 100, 100);
-            resultTextList.RemoveAt(0);
+            if (resultTextList.Count > 0)
+            {
+                if (resultTextList[0] != null)
+                    resultTextList[0].transform.position = new Vector3(100, 100, 100);
+                resultTextList.RemoveAt(0);
+            }
+
         }
 
         foreach (GameObject obj in resultTextList)
         {
-            float step = 1.5f * Time.deltaTime;
-            obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-15, 19, -11), step);
-            obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 1.2f, obj.transform.localScale.y * 1.2f, obj.transform.localScale.z * 1.2f), step);
-            if(obj.transform.localScale.x > 8)
+            if (obj != null)
             {
-                TextMesh mesh = obj.GetComponent<TextMesh>();
-                mesh.text = "";
-            }
-        }
-    }
+                float step;
+                if (moveResultTowardUser)
+                {
+                    step = 1.8f * Time.deltaTime;
+                    obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-15, 19, -11), step);
+                    obj.transform.localScale = Vector3.MoveTowards(obj.transform.localScale, new Vector3(obj.transform.localScale.x * 1.2f, obj.transform.localScale.y * 1.2f, obj.transform.localScale.z * 1.2f), step);
+                    if (obj.transform.localScale.x > 8)
+                    {
+                        TextMesh mesh = obj.GetComponent<TextMesh>();
+                        mesh.text = "";
+                    }
+                }
+                else
+                {
+                    step = 3f * Time.deltaTime;
+                    if (resultCount < 25)
+                    {
+                        obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-4 + ((resultCount - 1) * 0.4f), 15.9f, 2), step);
+                    }
+                    else
+                    {
+                        int temp = resultCount - 24;
+                        if (temp > 32)
+                        {
+                            temp -= 32;
+                            if (temp % 32 < 6)
+                                obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.45f), 14.5f, 2), step);
+                            else
+                                obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.38f), 14.5f, 2), step);
+                        }
+                        else
+                        {
+                            if (temp % 32 < 6)
+                                obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.45f), 15.4f, 2), step);
+                            else
+                                obj.transform.position = Vector3.MoveTowards(obj.transform.position, new Vector3(-7.9f + ((temp - 1) * 0.38f), 15.4f, 2), step);
+                        }
 
-    private void ShowResultOnGUI(String result)
-    {
-        currentDieResult = result;
+                    }
+                    if (obj.transform.position.z < 2.000001f && obj.transform.position.z > 1.999999f)
+                    {
+                        TextMesh mesh = obj.GetComponent<TextMesh>();
+                        mesh.text = "";
+                    }
+                }
+            }            
+            
+        }
     }
 
     private void OnTimedEvent(System.Object source, ElapsedEventArgs e)

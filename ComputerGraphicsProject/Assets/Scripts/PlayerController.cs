@@ -241,6 +241,12 @@ public class PlayerController : MonoBehaviour
         {
             rotateCurrentObjectY(-1 * objectReleaseIntensity);
         }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         this.updateDice();
         updateResults();
         int result = this.getResult();

@@ -77,7 +77,8 @@ public abstract class Rollable : MonoBehaviour
     // Remove die when it leaves field of view
     void OnBecameInvisible()
     {
-        Destroy(gameObject);
+        if(rigidBody.position.y < 0)
+            Destroy(gameObject);
     }
 
     /// <summary>

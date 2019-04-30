@@ -70,6 +70,7 @@ public class SettableFriction : MonoBehaviour
             }
 
             currentSurfaceType = type;
+            GetComponent<MeshCollider>().material = currentPhysicsMaterial;
         }
 
     }

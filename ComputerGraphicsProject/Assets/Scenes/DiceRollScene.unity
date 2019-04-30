@@ -484,6 +484,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
+        type: 3}
+      propertyPath: m_AngularDrag
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 289000985, guid: 8eaa32cffa4fa3e46840c43a29ba963d, type: 3}
       propertyPath: m_Name
       value: Selector Bottle
@@ -531,21 +546,6 @@ PrefabInstance:
     - target: {fileID: 289000988, guid: 8eaa32cffa4fa3e46840c43a29ba963d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
-        type: 3}
-      propertyPath: m_AngularDrag
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
-        type: 3}
-      propertyPath: m_CollisionDetection
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3978191239385075102, guid: 8eaa32cffa4fa3e46840c43a29ba963d,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 251133264737749397, guid: 8eaa32cffa4fa3e46840c43a29ba963d, type: 3}

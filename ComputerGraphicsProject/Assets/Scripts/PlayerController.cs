@@ -325,8 +325,11 @@ public class PlayerController : MonoBehaviour
 
     private void respawnObject()
     {
-        CurrentObjectToBeThrown = instantiateSelectedObject();
-        isThrown = false;
+        if (isThrown)
+        {
+            CurrentObjectToBeThrown = instantiateSelectedObject();
+            isThrown = false;
+        }
     }
 
     private void throwObject()
@@ -335,6 +338,7 @@ public class PlayerController : MonoBehaviour
         
         // enable gravity
         CurrentObjectToBeThrown.useGravity = true;
+        CurrentObjectToBeThrown.detectCollisions = true;
 
         // Get the location under the crosshair and set the throw direction towards it
         // Also sets the throw speed proportional to the intensity
@@ -581,6 +585,7 @@ public class PlayerController : MonoBehaviour
         }
         // initially not affected by gravity
         rigidbody.useGravity = false;
+        rigidbody.detectCollisions = false;
         return rigidbody;
     }
 

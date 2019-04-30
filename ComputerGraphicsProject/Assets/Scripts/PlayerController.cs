@@ -272,6 +272,12 @@ public class PlayerController : MonoBehaviour
             // rotate object to the right (positive yaw)
             rotateCurrentObjectY(-1 * objectReleaseIntensity);
         }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         this.updateDice();
         updateResults();
         int result = this.getResult();
